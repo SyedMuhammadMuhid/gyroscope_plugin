@@ -1,0 +1,1 @@
+class SensorException implements Exception {}

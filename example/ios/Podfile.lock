@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - gyroscope (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - gyroscope (from `.symlinks/plugins/gyroscope/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  gyroscope:
+    :path: ".symlinks/plugins/gyroscope/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  gyroscope: 0948d6ceaa8ec8e04da3ce98f8999600c957fb60
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.11.0.rc.1
