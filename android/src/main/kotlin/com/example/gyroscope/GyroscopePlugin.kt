@@ -18,6 +18,9 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 //import androidx.annotation.NonNull
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import kotlin.math.asin
+import kotlin.math.atan2
+import kotlin.math.sqrt
 
 
 /** GyroscopePlugin */
@@ -77,7 +80,7 @@ class GyroscopePlugin: FlutterPlugin, MethodCallHandler {
     methodChannel = MethodChannel(messenger, METHOD_CHANNEL_NAME)
     methodChannel!!.setMethodCallHandler(this)
     gyroscopeChannel = EventChannel(messenger, GYROSCOPE_CHANNEL_NAME)
-    gyroScopeStreamHandler = StreamHandlerImpl(sensorManager!!, Sensor.TYPE_GYROSCOPE)
+    gyroScopeStreamHandler = StreamHandlerImpl(sensorManager!!, Sensor.TYPE_GAME_ROTATION_VECTOR)
     gyroscopeChannel!!.setStreamHandler(gyroScopeStreamHandler!!)
 
   }
@@ -110,10 +113,38 @@ class StreamHandlerImpl(private val sensorManager: SensorManager, sensorType: In
   }
 
   override fun onSensorChanged(event: SensorEvent?) {
-    val sensorValues = listOf(event!!.values[0], event.values[1], event.values[2])
+    event ?: return
+    val sensorValues = rotateVector(event.values)
     eventSink?.success(sensorValues)
   }
 
+  // BONUS
+  private fun rotateVector(rotationVector: FloatArray): DoubleArray? {
+    var q0: Double
+    val q1 = rotationVector[0].toDouble()
+    val q2 = rotationVector[1].toDouble()
+    val q3 = rotationVector[2].toDouble()
+    if (rotationVector.size >= 4) {
+      q0 = rotationVector[3].toDouble()
+    } else {
+      q0 = 1 - q1 * q1 - q2 * q2 - q3 * q3
+      q0 = if (q0 > 0) sqrt(q0) else 0.0
+    }
+    val sqQ1 = 2 * q1 * q1
+    val sqQ2 = 2 * q2 * q2
+    val sqQ3 = 2 * q3 * q3
+    val q1Q2 = 2 * q1 * q2
+    val q3Q0 = 2 * q3 * q0
+    val q1Q3 = 2 * q1 * q3
+    val q2Q0 = 2 * q2 * q0
+    val q2Q3 = 2 * q2 * q3
+    val q1Q0 = 2 * q1 * q0
+    return doubleArrayOf(
+      atan2(q1Q2 - q3Q0, 1 - sqQ1 - sqQ3),
+      asin(-(q2Q3 + q1Q0)),
+      atan2(-(q1Q3 - q2Q0), 1 - sqQ1 - sqQ2)
+    )
+  }
   fun setUpdateInterval(interval: Int) {
     this.interval = interval
     if (eventSink != null) {
