@@ -77,7 +77,7 @@ class GyroscopePlugin: FlutterPlugin, MethodCallHandler {
     methodChannel = MethodChannel(messenger, METHOD_CHANNEL_NAME)
     methodChannel!!.setMethodCallHandler(this)
     gyroscopeChannel = EventChannel(messenger, GYROSCOPE_CHANNEL_NAME)
-    gyroScopeStreamHandler = StreamHandlerImpl(sensorManager!!, Sensor.TYPE_GYROSCOPE)
+    gyroScopeStreamHandler = StreamHandlerImpl(sensorManager!!, Sensor.TYPE_GAME_ROTATION_VECTOR)
     gyroscopeChannel!!.setStreamHandler(gyroScopeStreamHandler!!)
 
   }
